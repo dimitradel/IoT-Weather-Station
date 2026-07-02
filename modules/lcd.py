@@ -5,7 +5,7 @@ import time
 _LCD_ADDR = 0x27
  
 def _i2c():
-    return I2C(0, sda=Pin(0), scl=Pin(1), freq=50_000)
+    return I2C(0, sda=Pin(0), scl=Pin(1), freq=100_000)
  
 _bus = None
  
