@@ -21,6 +21,18 @@
 - Breadboard
 - Καλώδια σύνδεσης
 
+## Δομή του Repository
+
+```text
+IoT-Weather-Station/
+│
+├── main.py
+├── modules/
+│   ├── lcd.py
+│   ├── rgb.py
+│   └── servo.py
+└── README.md
+```
 ## Δυνατότητες
 
 - Μέτρηση θερμοκρασίας
