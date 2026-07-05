@@ -23,7 +23,7 @@
 
 ## Δομή του Repository
 
-```text
+<pre>
 IoT-Weather-Station/
 │
 ├── main.py
@@ -32,7 +32,8 @@ IoT-Weather-Station/
 │   ├── rgb.py
 │   └── servo.py
 └── README.md
-```
+</pre>
+
 ## Δυνατότητες
 
 - Μέτρηση θερμοκρασίας
