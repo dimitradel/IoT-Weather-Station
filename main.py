@@ -70,7 +70,5 @@ while True:
     print("Humidity   :", H, "%")
     print("-----------------------")
     
-    
-    #servo.set_angle(0)
     sleep(MEASURE_S)  
 
