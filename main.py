@@ -2,7 +2,8 @@ from machine import Pin, PWM
 from time import sleep
 import dht, lcd, servo, rgb
 from secrets import secrets
-import network
+import network, json
+from mqtt import MQTTClient
 
 #Παραμετροποίηση προγράμματος
 RED_PIN = 14
@@ -15,8 +16,13 @@ SERVO_PIN=10
 WIFI_SSID = secrets["WIFI_SSID"]
 WIFI_PW = secrets["WIFI_PW"]
 
+MQTT_HOST = "test.mosquitto.org"
+MQTT_PORT = 1883
+MQTT_CLIENT_ID = "dimitra"
+TOPIC_DATA = b"robotonio/dimitra/weather"
+
 #Timings
-MEASURE_S = 20 # 20s - 35s 
+MEASURE_S = 10  
 
 comfort_index = ""
 
@@ -33,7 +39,7 @@ lcd.puts("Starting...",1)
 sleep(1)
 
 #=====================================
-#WIFI
+# WIFI Connection
 #=====================================
 lcd.puts("Connecting WiFi...", 0)
 lcd.puts("",1)
@@ -54,7 +60,33 @@ lcd.puts("WiFi Connected! IP:", 0)
 lcd.puts(wlan.ifconfig()[0],1)
 sleep(1)
 
+#=====================================
+# MQTT Connection (Adafruit IO)
+#=====================================
+lcd.puts("Connecting MQTT...", 0)
+lcd.puts("Please Wait...",1)
+print("Connecting to Adafruit IO...")
+
+client = MQTTClient(
+    client_id = MQTT_CLIENT_ID,
+    server = MQTT_HOST,
+    port = MQTT_PORT,
+    keepalive = 60
+    )
+
+client.connect()
+
+print("Connected to Adafruit IO")
+print("-------------------------")
+lcd.puts("Adafruit IO OK!", 0)
+lcd.puts("",1)
+sleep(1)
+
+counter = 0
+
 while True:
+    counter = counter + 1 #counter += 1
+    
     sensor.measure() #Παίρνω τη μέτρηση
     T = sensor.temperature() # Σπάω τη μέτρηση σε θερμοκρασία και
     H = sensor.humidity() # υγρασία
@@ -69,6 +101,20 @@ while True:
     print ("Temperature :", T, "C")
     print("Humidity   :", H, "%")
     print("-----------------------")
+ 
+    # Send Data MQTT
+    print("Sending data to MQTT...")
     
+    json_data = json.dumps({
+        "id"     : counter,
+        "temp"   : T,
+        "hum"    : H,
+        "comfort": comfort_index
+        })
+    
+    client.publish(TOPIC_DATA, json_data)
+    print("Data sent!")
+    print(json_data)
+    print("-------------------------")
+ 
     sleep(MEASURE_S)  
-
